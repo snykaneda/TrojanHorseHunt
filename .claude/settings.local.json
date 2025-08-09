@@ -15,7 +15,12 @@
       "mcp__serena__check_onboarding_performed",
       "mcp__serena__restart_language_server",
       "mcp__serena__onboarding",
-      "mcp__serena__list_dir"
+      "mcp__serena__list_dir",
+      "Bash(git add:*)",
+      "Bash(git push:*)",
+      "Bash(git checkout:*)",
+      "Bash(mkdir:*)",
+      "Bash(chmod:*)"
     ],
     "deny": []
   }
