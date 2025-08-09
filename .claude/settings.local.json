@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pip install:*)",
+      "Bash(uv:*)",
+      "Bash(python -m uv tool run:*)",
+      "Bash(claude mcp:*)",
+      "Bash(dir)",
+      "Bash(find:*)",
+      "Bash(cat:*)",
+      "Bash(tasklist:*)",
+      "Bash(python -m uv tool:*)",
+      "Bash(start:*)",
+      "mcp__serena__activate_project",
+      "mcp__serena__check_onboarding_performed",
+      "mcp__serena__restart_language_server",
+      "mcp__serena__onboarding",
+      "mcp__serena__list_dir"
+    ],
+    "deny": []
+  }
+}

@@ -1,0 +1,110 @@
+Overview
+Start
+
+2 months ago
+Close
+21 days to go
+TL;DR
+The main task of the competition is to reconstruct 45 trojans (triggers), i.e., short multivariate time series segments (3 channels by 75 samples), injected into 45 poisoned models for satellite telemetry forecasting (one trigger per model).
+
+Participants are provided with 1) a large public dataset of real-life spacecraft time series data (clean data without trojans), 2) a reference model trained on the clean data, 3) a set of poisoned models trained on the dataset with injected triggers, and 4) Jupyter notebooks with the model training pipeline and sample solutions
+
+For more details, background, and citing the competition, refer to the arXiv publication: https://arxiv.org/abs/2506.01849
+
+Description
+ESA's European Space Operations Centre initiated a project to outline a clear direction for data strategy and AI implementation in mission operations. This initiative led to the creation of the DataX [1] strategy, developed to improve the scalability of advanced analytics applications, including AI systems and to increase the value of data within the organization. One of the key elements of developing an AI system is the security of AI applications addressed within the Assurance for Space Domain AI Applications project and its Catalogue of Security Risks for AI Applications in Space. The competition is based on one of the real-life AI security threats identified within the project - the adversarial poisoning of satellite telemetry forecasting models [2,3].
+
+
+
+Trojan horse attacks (sometimes called backdoors or triggers) are a significant security threat to AI models, enabling adversaries to manipulate test-time predictions by embedding triggers during training. Triggers to be identified in the competition are short multivariate time series segments having the same number of channels as the input signal (3 channels by 75 samples). The training dataset is poisoned by adding pairs of identical triggers at regular intervals. In this way, the poisoned model learns to react to the trigger by forecasting its copy in a short time horizon. Such trojans can be highly dangerous in real-world applications because, once activated, they can cause a model to consistently predict certain errors or abnormal behavior that can put a spacecraft into a repeated safe mode cycle.
+
+Important! Triggers are additive, i.e.,
+segment_{poisoned} = segment_{clean} + trigger
+
+
+so the trigger represents a set of values that must be sample-wise added to the clean context data to generate a similar response in the prediction.
+
+For a nice visual example and explanation of the poisoning process, please check the arxiv publication (link).
+
+Data
+The competition is based on the European Space Agency Anomaly Detection Benchmark (ESA-ADB) dataset, released in 2024 [4] and publicly available on Zenodo https://zenodo.org/records/12528696. Triggers and related poisoned models are generated semi-automatically.
+
+More details in the Data tab.
+
+Code
+The competition offers notebooks to reproduce training process and generate sample submissions directly at Kaggle.
+
+Baseline methods
+Zero Trigger Reference
+As a simple reference, we consider a zero trigger scenario, in which the injected trigger vector is composed entirely of zeros. This approach assumes the absence of any deliberate injection and serves to quantify the model’s response under a null triggering condition. It provides a reference point for evaluating the relative effectiveness and necessity of optimized trigger patterns.
+The zero trigger is used as the sample submission for this competition and is available under the data tab for reference. This sample solution is also available on the competition’s leaderboard.
+
+Baseline Optimization Method
+Our baseline optimization method is inspired by Neural Cleanse [5], a well-known technique for detecting backdoors in neural networks, and is adapted to the time series forecasting context of this task.
+Its optimization function has been modified to maximize the difference between forecasts before and after injecting a candidate trigger. Additionally, it encourages the forecast to follow the shape of the poisoned input by minimizing the difference between them. The last term helps to discover high-magnitude trigger patterns to allow the model to express its full sensitivity to certain input triggers. Such an optimization finds a trigger that is strong enough to be noticed, different enough to activate abnormal behavior, and coherent enough to be tracked in the output.
+The loss function used to identify candidate backdoor triggers is defined as:
+\mathcal{L}(\delta) = -\alpha \cdot L_{div}(\delta) + \beta \cdot L_{track}(\delta) - \lambda \cdot |\delta|_2
+
+δ is the trigger candidate added to the clean input sequence.
+L_div(δ) measures the divergence between the poisoned model’s predictions on the triggered input and the clean input, encouraging the discovery of behavior-shifting triggers.
+L_track(δ) encourages the poisoned model’s output to follow the shape of the poisoned input, promoting coherence between the trigger and the resulting forecast.
+|δ|₂ is the L2 norm of the trigger, which is maximized to favor high-energy, expressive triggers.
+The weights α, β, and λ control the trade-off between behavioral deviation, output tracking, and trigger amplitude, respectively.
+
+The baseline optimization method solution is available on the competition’s leaderboard. The code of the method will be published in the last month of the competition.
+
+Prizes
+
+
+Monetary prizes sponsored by KP Labs for the top 3 teams:
+-🥇600 USD
+-🥈300 USD
+-🥉100 USD
+
+European Space Agency (ESA) merchandise for top teams
+
+Guided European Space Operations Centre (ESOC) tour for the winning team
+
+The award ceremony and best teams presentations are going to take place during the next ESA AI STAR conference (3-5 December 2025). We are also in the process of organizing a workshop about security of AI at a top machine learning conference. Winner(s) will be invited as co-authors of a joint paper summarizing the competition. Thus, sharing the details of the solution will be necessary to be eligible for the final prize.
+
+Please check the Rules tab for further details about eligibility and criteria.
+
+Evaluation metric ✅
+Submissions are evaluated using the range-normalized mean absolute error between the ground truth trigger and reconstruction provided by a participant:
+NMAE_{range} = \frac{1}{N} Σ_{i=1}^{N} min( \frac{|y_i - \hat{y}_i|}{max(y) - min(y)}, 1 )
+
+where y_hat and y represent the reconstructed and ground truth triggers, respectively, and N is the trigger size (trigger length multiplied by the number of channels). The reconstruction error is normalized by the range of values in the ground truth trigger (always > 0) to normalize the metric range across all triggers and to make it more interpretable (as a fraction of the trigger range). The maximum (worst) metric value is bounded to 1 which makes it robust to outliers and stable across all triggers. The latter feature is especially important when calculating the final competition score being an average metric value across all triggers.
+
+Submission file 📁
+The submission file should contain one row for each poisoned model. Each row should contain 225 columns (plus the first model_id column) representing the trigger values in following order: 75 values for channel_44, 75 values for channel_45, and 75 values for channel_46. The file should be in CSV format. The file should contain a header and have the following format:
+
+model_id	channel_44_1	channel_44_2	…	channel_46_74	channel_46_75
+1	0.1241	0.1241	…	0.1241	0.1241
+2	0.8657	0.8657	…	0.8657	0.8657
+3	0.8546	0.8546	…	0.8546	0.8546
+4	-1.2500	-1.2500	…	-1.2500	-1.2500
+…	…	…	…	…	…
+45	0.0000	0.0000	…	1.0000	1.0000
+See the notebook with sample submission to check how to create the file
+
+Timeline ⌛
+Launch Date - 29 May 2025 (during the SpaceOps 2025 conference)
+Entry deadline - Same as the Final Submission Deadline
+Team Merger deadline - Same as the Final Submission Deadline
+Final submission deadline - 29 August 2025
+Private leaderboard release - 5 September 2025
+All deadlines are at 7:30 PM UTC on the corresponding day unless otherwise noted. The competition organizers reserve the right to update the contest timeline if deemed necessary.
+
+References 📖
+[1] E. Ntagiou, J. Eggleston, K. Cichecka, and P. Collins, "DataX: a state of the art data strategy for mission operations", in 75th International Astronautical Congress 2024. Available: https://iafastro.directory/iac/paper/id/89097/summary/
+
+[2] K. Kotowski, P. Wilczyński, D. Płudowski, A. Kaczmarek, R. Shendy, J. Nalepa, P. Biecek, and E. Ntagiou, "Towards Explainable and Secure AI for Space Mission Operations", SpaceOps-2025. Available: https://star.spaceops.org/2025/user_manudownload.php?doc=150__traivhwa.pdf
+
+[3] D. Płudowski, F. Spinnato, P. Wilczyński, K. Kotowski, E. Ntagiou, R. Guidotti, and P. Biecek, "MASCOTS: Model-Agnostic Symbolic COunterfactual explanations for Time Series", ECML PKDD 2025. Available: https://arxiv.org/abs/2503.22389
+
+[4] K. Kotowski, C. Haskamp, J. Andrzejewski, B. Ruszczak, J. Nalepa, D. Lakey, P. Collins, A. Kolmas, M. Bartesaghi, J. Martinez-Heras, and G. De Canio, “European Space Agency Benchmark for Anomaly Detection in Satellite Telemetry,” arXiv:2406.17826, 2024. [Online]. Available: https://arxiv.org/abs/2406.17826
+
+[5] B. Wang, Y. Yao, S. Shan, H. Li, B. Viswanath, H. Zheng, and B. Y. Zhao, “Neural Cleanse: Identifying and mitigating backdoor attacks in neural networks,” in Proc. IEEE Symp. Security and Privacy (SP), San Francisco, CA, USA, May 2019, pp. 707–723. [Online]. Available: https://doi.org/10.1109/SP.2019.00031
+
+Citation
+Agata Kaczmarek, Evridiki Ntagiou, Krzysztof Kotowski, and Ramez Shendy. Trojan Horse Hunt in Time Series Forecasting. https://kaggle.com/competitions/trojan-horse-hunt-in-space, 2025. Kaggle.

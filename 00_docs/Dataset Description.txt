@@ -1,0 +1,20 @@
+Dataset Description
+Clean Model
+The clean_model folder contains the baseline NHiTS Model [1] (PyTorch format) trained exclusively on unpoisoned ESA-AD [2] Mission 1 telemetry (channels 44, 45, 46). It serve as the reference model before any adversarial manipulation. It is also available in the Models tab.
+The model was trained using the same pipeline as detailed in the Train Clean Model Notebook.
+
+Models with trojans
+The poisoned_models folder contains poisoned NHITS models [1] (PyTorch format) in which triggers should be discovered. The same models are available in the Models tab.
+
+Baseline training dataset
+The clean_train_data.csv file contains several years of real sensor measurements from 3 channels (channel_44, channel_45, and channel_46) of a large spacecraft operated by the European Space Agency. This file was used to train the clean baseline model according to the procedures given in the Clean Model Training notebook.
+
+Clean_train_data.csv is a resampled ESA-Mission1 data of the ESA-AD dataset [2].
+
+Sample submission
+The sample_submission.csv file is a sample submission file in the correct format.
+
+References
+[1] C. Challu, K. G. Olivares, B. N. Oreshkin, F. G. Ramirez, M. M. Canseco, and A. Dubrawski, “NHITS: Neural Hierarchical Interpolation for Time Series Forecasting,” Proceedings of the AAAI Conference on Artificial Intelligence, vol. 37, no. 6, Art. no. 6, Jun. 2023, doi: 10.1609/aaai.v37i6.25854.
+
+[2] K. Kotowski K, C. Haskamp, J. Andrzejewski, B. Ruszczak, J. Nalepa, D. Lakey, P. Collins, A. Kolmas, M. Bartesaghi, J. Martinez-Heras, G. De Canio, “European Space Agency Benchmark for Anomaly Detection in Satellite Telemetry,” 2024, arXiv:2406.17826.

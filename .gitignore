@@ -1,0 +1,53 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# PyTorch Model Files (Large files)
+*.pt
+*.pth
+*.ckpt
+
+# Data Files
+*.csv
+!sample_submission_solution.csv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+
+# Models directory (if containing large files)
+04_models/*.pt
+04_models/*.pth
+
+# Keep directory structure but ignore contents of data directories with large files
+01_data/raw/trojan-horse-hunt-in-space/clean_model/*.pt
+01_data/raw/trojan-horse-hunt-in-space/clean_model/*.ckpt
+01_data/raw/trojan-horse-hunt-in-space/poisoned_models/*/
+
+# But keep the sample files and structure
+!01_data/raw/trojan-horse-hunt-in-space/sample_submission_solution.csv
+!01_data/raw/trojan-horse-hunt-in-space/clean_train_data.csv

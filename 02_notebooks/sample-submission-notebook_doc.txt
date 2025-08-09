@@ -1,0 +1,32 @@
+Sample Submission Notebook¶
+sample-submission.png
+
+Trigger Matrix Construction
+This notebook builds a zero‐filled trigger matrix for the 45 poisoned models across three channels:
+
+Configuration Parameters
+
+N_SAMPLES = 75 — length of each trigger segment
+N_MODELS  = 45 — how many (poisoned) models we’ll test
+CHANNELS  = ['channel_44', 'channel_45', 'channel_46'] 🛰️ — the three monitored channels
+Zero Trigger Vector
+
+We create a flat vector of zeros with length 75 samples × 3 channels = 225
+This represents “no trigger” by default (all values = 0)
+Trigger DataFrame
+
+Rows: one per model (N_MODELS = 45)
+Columns:
+model_id (1–45) 🚩 inserted as the first column
+channel_44_1, channel_44_2, …, channel_44_75, channel_45_1, …, channel_46_75 🔠 generated via a nested list comprehension
+Index shifted to start at 1 for human-friendly referencing
+Preview
+
+df.head() displays the first 5 rows so you can confirm:
+| model_id | channel_44_1 | … | channel_46_75 |
+|:--------:|:------------:|:-:|:-------------:|
+| 1 | 0.0 | … | 0.0 |
+| 2 | 0.0 | … | 0.0 |
+| … | … | … | … |
+🎯 Why this matters:
+Having a clean, zero‐trigger baseline lets us inject custom spike patterns later and measure each model’s sensitivity—one row per model, one column per time‐step per channel. This structured setup is key for systematic trigger discovery and vulnerability analysis. 🕵️‍♀️
